@@ -25,35 +25,38 @@ This project automates the deployment and configuration of a web server and a da
 
 ## Deployment Instructions
 
-### Step 1: Clone the Repository
+**Step 1: Clone the Repository**
 
 ```sh
 git clone https://github.com/yourusername/vm-deployment-with-terraform-ansible.git
 cd vm-deployment-with-terraform-ansible
+```
 
-### Step 2: Initialize and Apply Terraform Configuration
+**Step 2: Initialize and Apply Terraform Configuration**
 
 ```sh
 cd terraform
 terraform init
 terraform apply -auto-approve
+```
 
-### Step 3: Configure Ansible Inventory
+**Step 3: Configure Ansible Inventory**
 
 Terraform outputs the IP addresses of the created VMs. The terraform_inventory.py script dynamically generates the Ansible inventory based on these outputs.
 
-### Step 4: Run Ansible Playbook
+**Step 4: Run Ansible Playbook**
 
 ```sh
 cd ../ansible
 ansible-playbook playbook.yml
-
-### Step 5: Make a REST Call to the Flask Application
+```
+**Step 5: Make a REST Call to the Flask Application**
 
  Replace <database_server_ip> with the actual IP address of your database server
 
 ```sh
 curl http://<database_server_ip>:5000/top_scorers
+```
 
  Expected Output
 
@@ -80,6 +83,7 @@ curl http://<database_server_ip>:5000/top_scorers
         "goals": 9
     }
 ]
+```
 
 ## Detailed Explanation of Files
 
