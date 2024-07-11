@@ -89,24 +89,30 @@ curl http://<database_server_ip>:5000/top_scorers
 
 #Terraform Configuration
 
+```
 main.tf: Defines the AWS resources (web server and database server instances).
 variables.tf: Specifies variables used in the Terraform configuration.
 outputs.tf: Outputs the public IP addresses of the VMs.
 provider.tf: Configures the AWS provider.
+```
 
 #Ansible Configuration
 
+```
 ansible.cfg: Configures Ansible to use the dynamic inventory script.
 terraform_inventory.py: Generates the Ansible inventory dynamically based on Terraform outputs.
 playbook.yml: Ansible playbook that runs roles for web server and database server configurations.
 roles/webserver: Contains tasks and templates for configuring Nginx on the web server.
 roles/database: Contains tasks and files for configuring MariaDB and deploying the Flask application.
+```
 
 #Flask Application
 
+```
 app.py: Flask application providing a REST API to fetch data from the MariaDB database.
 requirements.txt: Specifies dependencies for the Flask application.
 db_setup.sql: SQL script to set up the database schema and insert mock data.
+```
 
 #Contact
 
