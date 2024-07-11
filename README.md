@@ -47,10 +47,10 @@ ansible-playbook playbook.yml
 
 ### Step 5: Make a REST Call to the Flask Application
 
-# Replace <database_server_ip> with the actual IP address of your database server
+ Replace <database_server_ip> with the actual IP address of your database server
 curl http://<database_server_ip>:5000/top_scorers
 
-# Expected Output
+ Expected Output
 
 [
     {
