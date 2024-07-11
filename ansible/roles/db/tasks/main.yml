@@ -1,0 +1,55 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install MariaDB
+  apt:
+    name: mariadb-server
+    state: present
+
+- name: Ensure MariaDB is running
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Create database user
+  mysql_user:
+    name: my_user
+    password: my_password
+    priv: '*.*:ALL'
+    state: present
+    host: "%"
+
+- name: Copy database setup script
+  copy:
+    src: db_setup.sql
+    dest: /tmp/db_setup.sql
+
+- name: Run database setup script
+  command: mysql -u my_user -pmy_password < /tmp/db_setup.sql
+
+- name: Install Python 3 and pip
+  apt:
+    name: 
+      - python3
+      - python3-pip
+    state: present
+
+- name: Install Flask and MySQL connector
+  pip:
+    requirements: /opt/requirements.txt
+
+- name: Copy Flask app
+  copy:
+    src: app.py
+    dest: /opt/app.py
+
+- name: Copy requirements file
+  copy:
+    src: requirements.txt
+    dest: /opt/requirements.txt
+
+- name: Start Flask app
+  command: nohup python3 /opt/app.py &
+

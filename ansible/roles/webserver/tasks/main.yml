@@ -1,0 +1,71 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Ensure Nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Allow HTTP and HTTPS traffic
+  ufw:
+    rule: allow
+    port: '80,443'
+    proto: tcp
+
+- name: Remove default Nginx site configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+    notify:
+      - restart nginx
+
+- name: Copy SSL certificate
+  copy:
+    src: ../certs/fullchain.pem
+    dest: /etc/letsencrypt/live/dru-testing.com/fullchain.pem
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Copy SSL certificate key
+  copy:
+    src: ../certs/privkey.pem
+    dest: /etc/letsencrypt/live/dru-testing.com/privkey.pem
+    mode: '0600'
+    owner: root
+    group: root
+
+- name: Deploy custom Nginx site configuration
+  template:
+    src: custom_nginx_site.j2
+    dest: /etc/nginx/sites-available/custom_nginx_site
+    mode: '0644'
+    notify:
+      - restart nginx
+
+- name: Enable custom Nginx site
+  file:
+    src: /etc/nginx/sites-available/custom_nginx_site
+    dest: /etc/nginx/sites-enabled/custom_nginx_site
+    state: link
+    force: yes
+    notify:
+      - restart nginx
+
+- name: Deploy index.html
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0644'
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
