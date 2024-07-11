@@ -114,10 +114,16 @@ roles/db: Contains tasks and files for configuring MariaDB and deploying the Fla
 ```
 
 ### Web Server Configuration
+
 Hostname Configuration
+
+
 The hostname for the web server is dynamically generated based on the public IP address of the instance. The terraform_inventory.py script generates hostnames in the format ws-<ip>.dru-testing.com, where <ip> is the public IP address with dots replaced by dashes. This will need to be later added to the DNS to be able to access the webserver via HTTPS.
 
+
 Nginx Configuration
+
+
 Nginx is configured to serve the web application over HTTPS using self-signed SSL certificates. The configuration steps are as follows:
 
 	1. Install Nginx:
