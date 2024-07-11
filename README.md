@@ -87,7 +87,7 @@ curl http://<database_server_ip>:5000/top_scorers
 
 ## Detailed Explanation of Files
 
-#Terraform Configuration
+### Terraform Configuration
 
 ```
 main.tf: Defines the AWS resources (web server and database server instances).
@@ -96,23 +96,42 @@ outputs.tf: Outputs the public IP addresses of the VMs.
 provider.tf: Configures the AWS provider.
 ```
 
-#Ansible Configuration
+### Ansible Configuration
 
 ```
 ansible.cfg: Configures Ansible to use the dynamic inventory script.
 terraform_inventory.py: Generates the Ansible inventory dynamically based on Terraform outputs.
 playbook.yml: Ansible playbook that runs roles for web server and database server configurations.
 roles/webserver: Contains tasks and templates for configuring Nginx on the web server.
-roles/database: Contains tasks and files for configuring MariaDB and deploying the Flask application.
+	tasks/main.yml: Installs and configures Nginx, and deploys the SSL certificates and the site configuration.
+	templates/custom_nginx_site.j2: Nginx configuration template for the site.
+	templates/index.html.j2: HTML template for the web server's home page.
+roles/db: Contains tasks and files for configuring MariaDB and deploying the Flask application.
+	tasks/main.yml: Installs and configures MariaDB, and sets up the Flask application.
+	files/rest-api.py: Flask application providing a REST API to fetch data from the MariaDB database.
+	files/requirements.txt: Specifies dependencies for the Flask application.
+	files/db_setup.sql: SQL script to set up the database schema and insert mock data.
 ```
 
-#Flask Application
+### Web Server Configuration
+Hostname Configuration
+The hostname for the web server is dynamically generated based on the public IP address of the instance. The terraform_inventory.py script generates hostnames in the format ws-<ip>.dru-testing.com, where <ip> is the public IP address with dots replaced by dashes. This will need to be later added to the DNS to be able to access the webserver via HTTPS.
 
-```
-app.py: Flask application providing a REST API to fetch data from the MariaDB database.
-requirements.txt: Specifies dependencies for the Flask application.
-db_setup.sql: SQL script to set up the database schema and insert mock data.
-```
+Nginx Configuration
+Nginx is configured to serve the web application over HTTPS using self-signed SSL certificates. The configuration steps are as follows:
+
+	1. Install Nginx:
+	   The main.yml file in the webserver role installs Nginx and ensures it is running.
+
+	2.Deploy SSL Certificates:
+	   The self-signed SSL certificates are copied from the certs directory to the appropriate location on the web server.
+
+	3. Nginx Site Configuration:
+	   The Nginx site configuration is defined in the custom_nginx_site.j2 template. This configuration sets up the server to listen on port 80 and redirect HTTP traffic to HTTPS on port 443. The SSL certificates are specified in this configuration.
+
+	4. Deploy HTML Template:
+	   The index.html.j2 template is used to create the home page for the web server. This file is deployed to the /var/www/html directory on the web server.
+
 
 #Contact
 
